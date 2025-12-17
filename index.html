@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Match App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
+        .heart-beat { animation: beat 0.8s infinite alternate; }
+        @keyframes beat { to { transform: scale(1.2); } }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-rose-400 to-orange-300 min-h-screen p-4">
+
+    <div class="max-w-md mx-auto space-y-6">
+        <div class="glass rounded-3xl p-2 shadow-2xl overflow-hidden">
+            <iframe src="https://forms.gle/hhBXHjWtHBpKZKK87" class="w-full h-[500px] rounded-2xl"></iframe>
+        </div>
+
+        <div class="glass rounded-3xl p-6 shadow-2xl">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">🔥 Parejas en Vivo</h2>
+            <div id="contenedor-matches" class="space-y-3">
+                <p class="text-center text-gray-500">Buscando flechazos...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "TU_URL_DE_APPS_SCRIPT_AQUI";
+
+        async function refresh() {
+            try {
+                const res = await fetch(API_URL);
+                const data = await res.json();
+                const html = data.map(m => `
+                    <div class="flex items-center justify-between bg-white p-4 rounded-2xl shadow-sm border-l-4 border-rose-500">
+                        <span class="font-semibold text-gray-700">${m.p1}</span>
+                        <span class="heart-beat">❤️</span>
+                        <span class="font-semibold text-gray-700">${m.p2}</span>
+                    </div>
+                `).join('');
+                document.getElementById('contenedor-matches').innerHTML = html || "<p class='text-center'>Nadie ha hecho match aún...</p>";
+            } catch(e) { console.log("Error de conexión"); }
+        }
+
+        setInterval(refresh, 5000); // Actualiza cada 5 segundos
+        refresh();
+    </script>
+</body>
+</html>
